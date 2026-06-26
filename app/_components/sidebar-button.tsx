@@ -9,7 +9,7 @@ interface SidebarButtonProps {
   href: string;
 }
 
-const SidebarButton = async ({ href, children }: SidebarButtonProps) => {
+const SidebarButton = ({ href, children }: SidebarButtonProps) => {
   const pathname = usePathname();
 
   return (
