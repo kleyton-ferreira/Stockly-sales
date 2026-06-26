@@ -3,7 +3,9 @@ import { db } from "@/app/_lib/prisma";
 // FUNÇAO GET - PEGAR PRODUTOS DO BANCO!
 export async function GET() {
     const products = await db.product.findMany({})
-    return Response.json(products, {
+    const randomNumber = Math.random()
+
+    return Response.json({ products, randomNumber }, {
         status: 200
     })
 }

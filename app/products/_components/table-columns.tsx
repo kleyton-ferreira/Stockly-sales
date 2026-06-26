@@ -33,6 +33,7 @@ export const productTableColumns: ColumnDef<Product>[] = [
     header: "Status",
     cell: (row) => {
       const product = row.row.original;
+
       const label = getStatusLabel(product);
       return (
         <Badge

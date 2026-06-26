@@ -4,6 +4,8 @@ import { DataTable } from "../_components/ui/data-table";
 import { productTableColumns } from "./_components/table-columns";
 import { getProducts } from "../_data-access/product/get-products";
 
+export const dynamic = "force-dynamic";
+
 const ProductPage = async () => {
   const products = await getProducts();
 
