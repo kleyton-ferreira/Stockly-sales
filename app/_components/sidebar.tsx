@@ -3,7 +3,7 @@ import SidebarButton from "./sidebar-button";
 
 const Sidebar = () => {
   return (
-    <div className="w-64 bg-white">
+    <div className="w-72 bg-white">
       <div className="px-7 py-6">
         <h1 className="text-2xl font-bold text-textGreen-primary">STOCKLY</h1>
       </div>

@@ -7,10 +7,6 @@ body {
   @apply h-full;
 }
 
-body {
-  @apply bg-slate-300;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
