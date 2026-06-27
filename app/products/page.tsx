@@ -1,8 +1,7 @@
-import { PlusIcon } from "lucide-react";
-import { Button } from "../_components/ui/button";
 import { DataTable } from "../_components/ui/data-table";
 import { productTableColumns } from "./_components/table-columns";
 import { getProducts } from "../_data-access/product/get-products";
+import AddproductButton from "./_components/add-product-button";
 
 export const dynamic = "force-dynamic";
 
@@ -16,13 +15,9 @@ const ProductPage = async () => {
           <p className="text-sm font-bold text-textGreen-primary">Produtos</p>
           <h2 className="text-xl font-bold">Gestão de Produtos</h2>
         </div>
-        <div className="[&_svg]:size-auto">
-          <Button variant="destructive">
-            <PlusIcon size={20} /> Novo Produto
-          </Button>
-        </div>
+        <div className="[&_svg]:size-auto"></div>
+        <AddproductButton />
       </div>
-
       <DataTable
         columns={productTableColumns}
         data={JSON.parse(JSON.stringify(products))}
