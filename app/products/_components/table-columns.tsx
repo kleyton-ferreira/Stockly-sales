@@ -3,7 +3,23 @@
 import { Product } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/app/_components/ui/badge";
-import { CircleIcon } from "lucide-react";
+import {
+  CircleIcon,
+  ClipboardCopyIcon,
+  EditIcon,
+  MoreHorizontalIcon,
+  TrashIcon,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/app/_components/ui/dropdown-menu";
+import { Button } from "@/app/_components/ui/button";
 
 const getStatusLabel = (product: Product) => {
   if (product.stock === 0) {
@@ -50,6 +66,49 @@ export const productTableColumns: ColumnDef<Product>[] = [
           />
           {label}
         </Badge>
+      );
+    },
+  },
+  {
+    accessorKey: "actions",
+    header: "Ações",
+    cell: (row) => {
+      const product = row.row.original;
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              <MoreHorizontalIcon
+                size={16}
+                className="text-bg-textGreen-primary"
+              />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              className="gap-1.5"
+              onClick={() => navigator.clipboard.writeText(product.id)}
+            >
+              <ClipboardCopyIcon size={16} />
+              Copiar ID
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem className="gap-1.5">
+              <EditIcon size={16} />
+              Editar
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem className="gap-1.5">
+              <TrashIcon size={16} />
+              Deletar
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       );
     },
   },
