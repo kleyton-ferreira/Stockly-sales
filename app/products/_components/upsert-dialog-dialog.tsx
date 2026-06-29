@@ -31,23 +31,29 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { createProduct } from "@/app/_actions/product/create-product";
 
 interface UpsetProducDialogProps {
+  defaultValues?: CreateProductSchema;
   onSuccess?: () => void;
 }
 
-const UpsetProducDialog = ({ onSuccess }: UpsetProducDialogProps) => {
+const UpsetProducDialog = ({
+  onSuccess,
+  defaultValues,
+}: UpsetProducDialogProps) => {
   const form = useForm<CreateProductSchema>({
     shouldUnregister: true,
     resolver: zodResolver(createProductSchema),
-    defaultValues: {
+    defaultValues: defaultValues ?? {
       name: "",
       price: 0,
       stock: 1,
     },
   });
 
+  const isEditing = !!defaultValues;
+
   const onSubmit = async (data: CreateProductSchema) => {
     try {
-      await createProduct(data);
+      await createProduct({ ...data, id: defaultValues?.id });
       onSuccess?.();
     } catch (error) {
       console.log(error);
@@ -58,7 +64,7 @@ const UpsetProducDialog = ({ onSuccess }: UpsetProducDialogProps) => {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <DialogHeader>
-            <DialogTitle>Criar Produto</DialogTitle>
+            <DialogTitle> {isEditing ? "Editar" : "Criar"} Produto</DialogTitle>
             <DialogDescription>Informações do produto abaixo</DialogDescription>
           </DialogHeader>
 

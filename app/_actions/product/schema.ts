@@ -1,6 +1,9 @@
 import z from "zod";
 
 export const createProductSchema = z.object({
+
+    id: z.string().uuid().optional(),
+
     name: z.string().trim().min(1, {
         message: "O nome do produto é obrigatório.",
     }),

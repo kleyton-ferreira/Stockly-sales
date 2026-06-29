@@ -6,8 +6,10 @@ import { CreateProductSchema, createProductSchema } from "./schema"
 
 export const createProduct = async (data: CreateProductSchema) => {
     createProductSchema.parse(data)
-    await db.product.create({
-        data
+    await db.product.upsert({
+        where: { id: data.id ?? "" },
+        update: data,
+        create: data,
     })
     revalidatePath("/product")
 }

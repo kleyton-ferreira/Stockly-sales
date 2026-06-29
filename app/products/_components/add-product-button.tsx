@@ -7,7 +7,7 @@ import { Button } from "@/app/_components/ui/button";
 import { PlusIcon } from "lucide-react";
 
 import { Dialog, DialogTrigger } from "../../_components/ui/dialog";
-import UpsetProducDialog from "./upset-dialog-dialog";
+import UpsetProducDialog from "./upsert-dialog-dialog";
 
 const AddproductButton = () => {
   const [dialogIsOpen, setDialogIsOpen] = useState(false);

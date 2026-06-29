@@ -25,6 +25,10 @@ import {
   AlertDialogTrigger,
 } from "@/app/_components/ui/alert-dialog";
 import DeleteProductDialogContent from "./delete-dialog-content";
+import { Dialog } from "@/app/_components/ui/dialog";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import UpsetProducDialog from "./upsert-dialog-dialog";
+import { useState } from "react";
 
 const getStatusLabel = (product: Product) => {
   if (product.stock === 0) {
@@ -78,48 +82,62 @@ export const productTableColumns: ColumnDef<Product>[] = [
     accessorKey: "actions",
     header: "Ações",
     cell: (row) => {
+      const [editDialogOpen, setEditDialogOpen] = useState(false);
       const product = row.row.original;
       return (
         <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <MoreHorizontalIcon
-                  size={16}
-                  className="text-bg-textGreen-primary"
-                />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuSeparator />
+          <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <MoreHorizontalIcon
+                    size={16}
+                    className="text-bg-textGreen-primary"
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                <DropdownMenuSeparator />
 
-              {/*  BOTAO - 1 */}
-              <DropdownMenuItem
-                className="gap-1.5"
-                onClick={() => navigator.clipboard.writeText(product.id)}
-              >
-                <ClipboardCopyIcon size={16} />
-                Copiar ID
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-
-              {/*  BOTAO - 2 */}
-              <DropdownMenuItem className="gap-1.5">
-                <EditIcon size={16} />
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-
-              {/*  BOTAO - 3 */}
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem className="gap-1.5">
-                  <TrashIcon size={16} /> Deletar
+                {/*  BOTAO - 1 */}
+                <DropdownMenuItem
+                  className="gap-1.5"
+                  onClick={() => navigator.clipboard.writeText(product.id)}
+                >
+                  <ClipboardCopyIcon size={16} />
+                  Copiar ID
                 </DropdownMenuItem>
-              </AlertDialogTrigger>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DeleteProductDialogContent productId={product.id} />
+                <DropdownMenuSeparator />
+
+                {/*  BOTAO - 2 */}
+                <DialogTrigger asChild>
+                  <DropdownMenuItem className="gap-1.5">
+                    <EditIcon size={16} />
+                    Editar
+                  </DropdownMenuItem>
+                </DialogTrigger>
+                <DropdownMenuSeparator />
+
+                {/*  BOTAO - 3 */}
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem className="gap-1.5">
+                    <TrashIcon size={16} /> Deletar
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <UpsetProducDialog
+              defaultValues={{
+                id: product.id,
+                name: product.name,
+                price: Number(product.price),
+                stock: product.stock,
+              }}
+              onSuccess={() => setEditDialogOpen(false)}
+            />
+            <DeleteProductDialogContent productId={product.id} />
+          </Dialog>
         </AlertDialog>
       );
     },
