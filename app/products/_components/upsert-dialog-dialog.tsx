@@ -29,7 +29,6 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProduct } from "@/app/_actions/product/create-product";
-import { toast } from "sonner";
 
 interface UpsetProducDialogProps {
   defaultValues?: CreateProductSchema;
@@ -56,9 +55,6 @@ const UpsetProducDialog = ({
     try {
       await createProduct({ ...data, id: defaultValues?.id });
 
-      isEditing
-        ? toast.success("Produto atualizado com sucesso!")
-        : toast.success("Produto criado com sucesso!");
       onSuccess?.();
     } catch (error) {
       console.log(error);
