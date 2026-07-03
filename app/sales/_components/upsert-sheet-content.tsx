@@ -36,6 +36,7 @@ import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import z from "zod";
+import SalesTableDropdowMenu from "./ table-dropdow-menu";
 
 const formSchema = z.object({
   productId: z.string().min(1, "O produto é obrigatório.").uuid(),
@@ -115,6 +116,12 @@ const UpsertSheetContent = ({
     }, 0);
   }, [selectedProducts]);
 
+  const handleDelete = (productId: string) => {
+    setSelectedProducts((currentProducts) => {
+      return currentProducts.filter((prod) => prod.id !== productId);
+    });
+  };
+
   return (
     <SheetContent className="!max-w-[600px]">
       <SheetHeader>
@@ -134,8 +141,6 @@ const UpsertSheetContent = ({
                 <Combobox
                   placeholder="Selecione um produto"
                   options={productOptions}
-                  // onChange={field.onChange}
-                  // value={field.value}
                   {...field}
                 />
                 <FormMessage />
@@ -173,6 +178,7 @@ const UpsertSheetContent = ({
             <TableHead>Preço Unitário</TableHead>
             <TableHead>Quantidade</TableHead>
             <TableHead>Total</TableHead>
+            <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -184,6 +190,12 @@ const UpsertSheetContent = ({
               <TableCell>
                 {formatCurrency(productItens.price * productItens.quantity)}
               </TableCell>
+              <TableCell>
+                <SalesTableDropdowMenu
+                  product={productItens}
+                  onDelete={handleDelete}
+                />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -191,6 +203,7 @@ const UpsertSheetContent = ({
           <TableRow>
             <TableCell colSpan={3}>Total</TableCell>
             <TableCell> {formatCurrency(productTotal)} </TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableFooter>
       </Table>
