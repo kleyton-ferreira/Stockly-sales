@@ -1,9 +1,6 @@
-import { PlusIcon } from "lucide-react";
-import { Button } from "../_components/ui/button";
-import { Sheet, SheetTrigger } from "../_components/ui/sheet";
-import UpsertSheetContent from "./_components/upsert-sheet-content";
 import { getProducts } from "../_data-access/product/get-products";
 import { ComboboxOption } from "../_components/ui/combobox";
+import CreatSaleButton from "./_components/creat-sale-button";
 
 const SalesPage = async () => {
   const product = await getProducts();
@@ -20,17 +17,10 @@ const SalesPage = async () => {
         </div>
         <div className="[&_svg]:size-auto"></div>
 
-        <Sheet modal={false}>
-          <SheetTrigger asChild>
-            <Button variant="destructive">
-              <PlusIcon /> Nova venda
-            </Button>
-          </SheetTrigger>
-          <UpsertSheetContent
-            products={product}
-            productOptions={productOptionsValues}
-          />
-        </Sheet>
+        <CreatSaleButton
+          products={product}
+          productOptions={productOptionsValues}
+        />
       </div>
     </div>
   );
