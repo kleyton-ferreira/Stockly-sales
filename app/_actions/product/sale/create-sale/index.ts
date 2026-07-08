@@ -3,7 +3,7 @@
 import { db } from "@/app/_lib/prisma";
 import { createSaleSchema } from "./schema";
 import { revalidatePath } from "next/cache";
-import { actionClient } from "@/app/_lib/ safe-actions";
+import { actionClient } from "@/app/_lib/safe-actions";
 import { returnValidationErrors } from "next-safe-action";
 
 export const CreateSale = actionClient

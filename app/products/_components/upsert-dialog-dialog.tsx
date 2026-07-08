@@ -29,6 +29,8 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProduct } from "@/app/_actions/product/create-product";
+import { useAction } from "next-safe-action/hooks";
+import { toast } from "sonner";
 
 interface UpsetProducDialogProps {
   defaultValues?: CreateProductSchema;
@@ -39,6 +41,16 @@ const UpsetProducDialog = ({
   onSuccess,
   defaultValues,
 }: UpsetProducDialogProps) => {
+  const { execute: executeCreatedProducts } = useAction(createProduct, {
+    onSuccess: () => {
+      toast.success("Produto salvo com sucesso.");
+      onSuccess?.();
+    },
+    onError: () => {
+      toast.error("Ocorreu um erro ao salvar o produto.");
+    },
+  });
+
   const form = useForm<CreateProductSchema>({
     shouldUnregister: true,
     resolver: zodResolver(createProductSchema),
@@ -51,22 +63,24 @@ const UpsetProducDialog = ({
 
   const isEditing = !!defaultValues;
 
-  const onSubmit = async (data: CreateProductSchema) => {
-    try {
-      await createProduct({ ...data, id: defaultValues?.id });
-
-      onSuccess?.();
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
     <DialogContent>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(executeCreatedProducts)}
+          className="space-y-8"
+        >
           <DialogHeader>
             <DialogTitle> {isEditing ? "Editar" : "Criar"} Produto</DialogTitle>
             <DialogDescription>Informações do produto abaixo</DialogDescription>
+
+            <FormField
+              control={form.control}
+              name="id"
+              render={({ field }) => (
+                <input type="hidden" {...field} value={field.value ?? ""} />
+              )}
+            />
           </DialogHeader>
 
           {/* 1 - INPUT */}
