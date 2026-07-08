@@ -1,58 +1,65 @@
 "use server"
 
 import { db } from "@/app/_lib/prisma";
-import { CreateSaleSchema, createSaleSchema } from "./schema";
+import { createSaleSchema } from "./schema";
 import { revalidatePath } from "next/cache";
+import { actionClient } from "@/app/_lib/ safe-actions";
+import { returnValidationErrors } from "next-safe-action";
 
-export const CreateSale = async (data: CreateSaleSchema) => {
-    createSaleSchema.parse(data)
-    await db.$transaction(async (trx) => {
-        const sale = await trx.sale.create({
-            data: {
-                date: new Date()
-            }
-        })
+export const CreateSale = actionClient
+    .schema(createSaleSchema)
+    .action(async ({ parsedInput: { products } }) => {
+        await db.$transaction(async (trx) => {
+            const sale = await trx.sale.create({
+                data: {
+                    date: new Date()
+                }
+            })
 
-        for (const product of data.products) {
+            for (const product of products) {
 
-            const productFromDb = (
-                await db.product.findUnique({
-                    where: {
-                        id: product.id
+                const productFromDb = (
+                    await db.product.findUnique({
+                        where: {
+                            id: product.id
+                        }
+                    })
+                )
+
+                if (!productFromDb) {
+                    returnValidationErrors(createSaleSchema, {
+                        _errors: ["Product not found"]
+                    })
+                }
+
+                const productIsOutOfStock = product.quantity > productFromDb.stock
+                if (productIsOutOfStock) {
+                    returnValidationErrors(createSaleSchema, {
+                        _errors: ["Product out of stock"]
+                    })
+                }
+
+                await trx.saleProduct.create({
+                    data: {
+                        saleId: sale.id,
+                        productId: product.id,
+                        quantity: product.quantity,
+                        unitPrice: productFromDb.price
                     }
                 })
-            )
-
-            if (!productFromDb) {
-                throw new Error("Product not found")
-            }
-
-            const productIsOutOfStock = product.quantity > productFromDb.stock
-            if (productIsOutOfStock) {
-                throw new Error("Product out of stock")
-            }
-
-            await trx.saleProduct.create({
-                data: {
-                    saleId: sale.id,
-                    productId: product.id,
-                    quantity: product.quantity,
-                    unitPrice: productFromDb.price
-                }
-            })
-            await trx.product.update({
-                where: {
-                    id: product.id,
-                },
-                data: {
-                    stock: {
-                        decrement: product.quantity
+                await trx.product.update({
+                    where: {
+                        id: product.id,
+                    },
+                    data: {
+                        stock: {
+                            decrement: product.quantity
+                        }
                     }
-                }
-            })
-        }
+                })
+            }
 
+        })
+        revalidatePath("products")
     })
 
-    revalidatePath("products")
-}
