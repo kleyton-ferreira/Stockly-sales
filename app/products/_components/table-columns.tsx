@@ -1,23 +1,23 @@
 "use client";
 
-import { Product } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/app/_components/ui/badge";
 import { CircleIcon } from "lucide-react";
 
 import ProductDropdownMenu from "./product-dropdown-menu";
+import { ProductDto } from "@/app/_data-access/product/get-products";
 
-const getStatusLabel = (product: Product) => {
-  if (product.stock === 0) {
+const getStatusLabel = (status: string) => {
+  if (status === "OUT_OF_STOCK") {
     return "Fora de Estoque";
   }
 
-  if (product.status === "IN_STOCK") {
+  if (status === "IN_STOCK") {
     return "Em estoque";
   }
 };
 
-export const productTableColumns: ColumnDef<Product>[] = [
+export const productTableColumns: ColumnDef<ProductDto>[] = [
   {
     accessorKey: "name",
     header: "Produto",
@@ -43,7 +43,7 @@ export const productTableColumns: ColumnDef<Product>[] = [
     cell: (row) => {
       const product = row.row.original;
 
-      const label = getStatusLabel(product);
+      const label = getStatusLabel(product.status);
       return (
         <Badge
           className="gap-1.5"
