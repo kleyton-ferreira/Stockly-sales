@@ -28,9 +28,8 @@ import {
   TableFooter,
   TableCaption,
 } from "@/app/_components/ui/table";
-import { formatCurrency } from "@/app/_helpers/ currency";
+import { formatCurrency } from "@/app/_helpers/currency";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Product } from "@prisma/client";
 import { CheckIcon, PlusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -39,9 +38,10 @@ import { useAction } from "next-safe-action/hooks";
 
 import z from "zod";
 import SalesTableDropdowMenu from "./ table-dropdow-menu";
-import { CreateSale } from "@/app/_actions/product/sale/create-sale";
+import { CreateSale } from "@/app/_actions/product/sale/upsert-sale";
 import { toast } from "sonner";
 import { flattenValidationErrors } from "next-safe-action";
+import { ProductDto } from "@/app/_data-access/product/get-products";
 
 const formSchema = z.object({
   productId: z.string().min(1, "O produto é obrigatório.").uuid(),
@@ -56,9 +56,11 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 interface UpsertSheetContentProps {
-  products: Product[];
+  saledId?: string;
+  products: ProductDto[];
   productOptions: ComboboxOption[];
   onSubmitSuccess: () => void;
+  defaultSelectedProducts?: SelectedProduct[];
 }
 
 interface SelectedProduct {
@@ -69,12 +71,14 @@ interface SelectedProduct {
 }
 
 const UpsertSheetContent = ({
+  saledId,
   products,
   productOptions,
   onSubmitSuccess,
+  defaultSelectedProducts,
 }: UpsertSheetContentProps) => {
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>(
-    [],
+    defaultSelectedProducts ?? [],
   );
 
   const { execute: executeCreateSale } = useAction(CreateSale, {
@@ -161,6 +165,7 @@ const UpsertSheetContent = ({
 
   const onSubmitSales = async () => {
     executeCreateSale({
+      id: saledId,
       products: selectedProducts.map((prod) => ({
         id: prod.id,
         quantity: prod.quantity,

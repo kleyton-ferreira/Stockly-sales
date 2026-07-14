@@ -3,12 +3,20 @@ import "server-only"
 import { db } from "@/app/_lib/prisma"
 import { Prisma } from "@prisma/client"
 
+interface SaleProductDto {
+    productId: string
+    quantity: number
+    unitPrice: number
+    productName: string
+}
+
 export interface SalesDto {
     id: string
     productNames: string
     totalProducts: number
     totalAmount: number
     date: Date
+    saleProduct: SaleProductDto[]
 }
 
 type SaleWithProducts = Prisma.SaleGetPayload<{
@@ -40,5 +48,11 @@ export const getSales = async (): Promise<SalesDto[]> => {
             (acc: number, saleProduct) => acc + saleProduct.quantity,
             0
         ),
+        saleProduct: sale.products.map((saleProd): SaleProductDto => ({
+            productId: saleProd.productId,
+            productName: saleProd.product.name,
+            quantity: saleProd.quantity,
+            unitPrice: Number(saleProd.unitPrice)
+        }))
     }))
 }

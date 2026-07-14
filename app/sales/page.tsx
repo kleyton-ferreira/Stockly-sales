@@ -12,6 +12,13 @@ const SalesPage = async () => {
     label: prod.name,
     value: prod.id,
   }));
+
+  const tableData = sales.map((item) => ({
+    ...item,
+    productsOne: product,
+    prodOptions: productOptionsValues,
+  }));
+
   return (
     <div className="w-full p-8">
       <div className="mb-6 flex items-center justify-between">
@@ -26,10 +33,7 @@ const SalesPage = async () => {
           productOptions={productOptionsValues}
         />
       </div>
-      <DataTable
-        columns={saleTableColmuns}
-        data={JSON.parse(JSON.stringify(sales))}
-      />
+      <DataTable columns={saleTableColmuns} data={tableData} />
     </div>
   );
 };

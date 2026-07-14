@@ -11,7 +11,7 @@ import {
   AlertDialogTrigger,
 } from "@/app/_components/ui/alert-dialog";
 import { Button } from "@/app/_components/ui/button";
-import { Sale } from "@prisma/client";
+import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
 
 import {
   DropdownMenu,
@@ -20,7 +20,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
+} from "@/app/_components/ui/dropdown-menu";
 import {
   MoreHorizontalIcon,
   ClipboardCopyIcon,
@@ -29,12 +29,25 @@ import {
 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { toast } from "sonner";
+import UpsertSheetContent from "./upsert-sheet-content";
+import { useState } from "react";
+import { ProductDto } from "@/app/_data-access/product/get-products";
+import { ComboboxOption } from "@/app/_components/ui/combobox";
+import { SalesDto } from "@/app/_data-access/sale/get-sales";
 
 interface SaleTableDropdownMenuProps {
-  sale: Pick<Sale, "id">;
+  sale: Pick<SalesDto, "id" | "saleProduct">;
+  productsOne: ProductDto[];
+  prodOptions: ComboboxOption[];
 }
 
-const SaleTableDropdownMenu = ({ sale }: SaleTableDropdownMenuProps) => {
+const SaleTableDropdownMenu = ({
+  sale,
+  productsOne,
+  prodOptions,
+}: SaleTableDropdownMenuProps) => {
+  const [upsertSheetIsOpen, setUpsertSheetIsOpen] = useState(false);
+
   const { execute } = useAction(deleteSale, {
     onSuccess: () => {
       toast.success("Venda deletada com sucesso.");
@@ -52,63 +65,80 @@ const SaleTableDropdownMenu = ({ sale }: SaleTableDropdownMenuProps) => {
   const handleConfirmDeleteClick = () => execute({ id: sale.id });
 
   return (
-    <AlertDialog>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline">
-            <MoreHorizontalIcon
-              size={16}
-              className="text-bg-textGreen-primary"
-            />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="bg-red-50 p-3">
-          <DropdownMenuLabel className="mb-6 font-bold">
-            Ações
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
+    <Sheet open={upsertSheetIsOpen} onOpenChange={setUpsertSheetIsOpen}>
+      <AlertDialog>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              <MoreHorizontalIcon
+                size={16}
+                className="text-bg-textGreen-primary"
+              />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="bg-red-50 p-3">
+            <DropdownMenuLabel className="mb-6 font-bold">
+              Ações
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
 
-          {/*  BOTAO - 1 */}
-          <DropdownMenuItem
-            className="mb-6 flex gap-1.5"
-            onClick={handleCopyToClipboardClick}
-          >
-            <ClipboardCopyIcon size={16} />
-            Copiar ID
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-
-          {/*  BOTAO - 2 */}
-          <DropdownMenuItem className="mb-6 flex gap-1.5">
-            <EditIcon size={16} />
-            Editar
-          </DropdownMenuItem>
-
-          {/*  BOTAO - 3 */}
-          <AlertDialogTrigger asChild>
-            <DropdownMenuItem className="flex gap-1.5">
-              <TrashIcon size={16} /> Deletar
+            {/*  BOTAO - 1 */}
+            <DropdownMenuItem
+              className="mb-6 flex gap-1.5"
+              onClick={handleCopyToClipboardClick}
+            >
+              <ClipboardCopyIcon size={16} />
+              Copiar ID
             </DropdownMenuItem>
-          </AlertDialogTrigger>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <DropdownMenuSeparator />
 
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Você está prestes a excluir esta venda. Esta ação nao pode ser
-            desfeita. Deseja continuar?
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirmDeleteClick}>
-            Continuar
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+            {/*  BOTAO - 2 */}
+            <SheetTrigger asChild>
+              <DropdownMenuItem className="mb-6 flex gap-1.5">
+                <EditIcon size={16} />
+                Editar
+              </DropdownMenuItem>
+            </SheetTrigger>
+
+            {/*  BOTAO - 3 */}
+            <AlertDialogTrigger asChild>
+              <DropdownMenuItem className="flex gap-1.5">
+                <TrashIcon size={16} /> Deletar
+              </DropdownMenuItem>
+            </AlertDialogTrigger>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você está prestes a excluir esta venda. Esta ação nao pode ser
+              desfeita. Deseja continuar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDeleteClick}>
+              Continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <UpsertSheetContent
+        saledId={sale.id}
+        productOptions={prodOptions}
+        products={productsOne}
+        onSubmitSuccess={() => setUpsertSheetIsOpen(false)}
+        defaultSelectedProducts={sale.saleProduct.map((slProducts) => ({
+          id: slProducts.productId,
+          quantity: slProducts.quantity,
+          name: slProducts.productName,
+          price: Number(slProducts.unitPrice),
+        }))}
+      />
+    </Sheet>
   );
 };
 
