@@ -34,9 +34,6 @@ const Home = async () => {
             <HeaderSubTitle>Visão geral dos dados</HeaderSubTitle>
             <HeaderTitle>Dashboard</HeaderTitle>
           </HeaderLeft>
-          <HeaderRight>
-            <Button>Adicionar</Button>
-          </HeaderRight>
         </HeaderContainer>
       </Header>
       <div className="grid grid-cols-2 gap-6">

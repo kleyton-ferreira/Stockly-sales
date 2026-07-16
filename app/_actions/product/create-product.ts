@@ -11,6 +11,7 @@ export const createProduct = actionClient.schema(createProductSchema).action(asy
         update: data,
         create: data,
     })
-    revalidatePath("/product")
+    revalidatePath("/product", "page")
+    revalidatePath("/")
 })
 

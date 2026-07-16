@@ -11,6 +11,6 @@ export const deleteProduct = actionClient.schema(deleteProductSchema).action(asy
             id
         }
     })
-    revalidatePath("/products")
+    revalidatePath("/", "layout")
 })
 
