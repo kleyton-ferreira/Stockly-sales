@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={` ${inter.className} antialiased`}>
-        <div className="flex h-full gap-4 overflow-hidden">
+        <div className="flex h-full gap-4">
           <Sidebar />
           {children}
         </div>

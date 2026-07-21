@@ -7,27 +7,32 @@ import {
 import Header, {
   HeaderContainer,
   HeaderLeft,
-  HeaderRight,
   HeaderSubTitle,
   HeaderTitle,
 } from "../_components/header";
-import { Button } from "../_components/ui/button";
 
 import {
   SummaryCardIcon,
   SummaryCardTitle,
   SummaryCardValue,
   SummaryCard,
-} from "./summary-card";
+} from "./_components/summary-card";
 import { getDashboard } from "../_data-access/dashboard/get-dashboard";
 import { formatCurrency } from "../_helpers/currency";
+import RevenueChart from "./_components/revenue-chart";
 
 const Home = async () => {
-  const { totalRevenue, todayRevenue, totalSales, totalStock, totalProducts } =
-    await getDashboard();
+  const {
+    totalRevenue,
+    todayRevenue,
+    totalSales,
+    totalStock,
+    totalProducts,
+    totalLast14DaysRevenue,
+  } = await getDashboard();
 
   return (
-    <div className="m-6 w-full space-y-8 rounded-lg">
+    <div className="m-6 flex w-full flex-col space-y-8 rounded-lg">
       <Header>
         <HeaderContainer>
           <HeaderLeft>
@@ -78,6 +83,12 @@ const Home = async () => {
           <SummaryCardTitle>Produtos</SummaryCardTitle>
           <SummaryCardValue> {totalProducts} </SummaryCardValue>
         </SummaryCard>
+      </div>
+
+      <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white p-6">
+        <p className="text-lg font-bold text-[#00A180]">Receita Total</p>
+        <p className="text-sm text-slate-500">últimos 14 dias</p>
+        <RevenueChart data={totalLast14DaysRevenue} />
       </div>
     </div>
   );
