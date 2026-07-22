@@ -2,10 +2,19 @@ import "server-only"
 
 import { db } from "@/app/_lib/prisma"
 import dayjs from "dayjs"
+import { ProductStatus } from "../product/get-products"
 
 export interface DayTotalRevenue {
     day: string
     totalRevenue: number
+}
+
+export interface MostSoldProductDto {
+    productId: string
+    name: string
+    totalRevenue: number
+    status: ProductStatus
+    price: number
 }
 
 interface DashboardDto {
@@ -15,6 +24,7 @@ interface DashboardDto {
     totalStock: number
     totalProducts: number
     totalLast14DaysRevenue: DayTotalRevenue[]
+    mostSoldProducts: MostSoldProductDto[]
 }
 
 export const getDashboard = async (): Promise<DashboardDto> => {
@@ -70,15 +80,25 @@ export const getDashboard = async (): Promise<DashboardDto> => {
             stock: true
         },
     })
-
     const totalProductsPromise = db.product.count()
 
-    const [totalRevenue, todayRevenue, totalSales, totalStock, totalProducts] = await Promise.all([
+    const mostSoldProductsQuery = `
+     SELECT "Product"."name", SUM("SaleProduct"."quantity") as "totalSold", "Product"."price", "Product"."stock", "Product"."id" as "productId"
+     FROM "SaleProduct"
+     JOIN "Product" ON "SaleProduct"."productId" = "Product"."id"
+     GROUP BY "Product"."name", "Product"."price", "Product"."stock", "Product"."id"
+     ORDER BY "totalSold" DESC
+     LIMIT 5
+    `;
+    const mostSoldProductsPromisse = await db.$queryRawUnsafe<{ productId: string, name: string; totalSold: number, stock: number, price: number }[]>(mostSoldProductsQuery)
+
+    const [totalRevenue, todayRevenue, totalSales, totalStock, totalProducts, mostSoldProducts] = await Promise.all([
         totalRevenuePromise,
         todayRevenuePromise,
         totalSalesPromise,
         totalStockPromise,
-        totalProductsPromise
+        totalProductsPromise,
+        mostSoldProductsPromisse
     ])
 
     return {
@@ -87,6 +107,13 @@ export const getDashboard = async (): Promise<DashboardDto> => {
         totalSales,
         totalStock: Number(totalStock._sum.stock),
         totalProducts,
-        totalLast14DaysRevenue
+        totalLast14DaysRevenue,
+        mostSoldProducts: mostSoldProducts.map((prod) => ({
+            productId: prod.productId,
+            name: prod.name,
+            price: Number(prod.price),
+            totalRevenue: Number(prod.totalSold),
+            status: prod.stock > 0 ? "IN_STOCK" : "OUT_OF_STOCK"
+        }))
     }
 }
