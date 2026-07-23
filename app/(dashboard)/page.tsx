@@ -24,10 +24,10 @@ import MostsoldProductItem from "./_components/most-sold-product";
 import TotalRevenueCards from "./_components/total-revenue-cards";
 import { Suspense } from "react";
 import TodayRevenueCard from "./_components/today-revenue-card";
+import TotalSalesCard from "./_components/total-sales-card";
 
 const Home = async () => {
   const {
-    totalSales,
     totalStock,
     totalProducts,
     totalLast14DaysRevenue,
@@ -55,13 +55,9 @@ const Home = async () => {
       </div>
 
       <div className="grid grid-cols-3 gap-6">
-        <SummaryCard>
-          <SummaryCardIcon>
-            <CircleDollarSign />
-          </SummaryCardIcon>
-          <SummaryCardTitle>Vendas Totais</SummaryCardTitle>
-          <SummaryCardValue> {totalSales} </SummaryCardValue>
-        </SummaryCard>
+        <Suspense fallback={<SumaryCardSkeletron />}>
+          <TotalSalesCard />
+        </Suspense>
 
         <SummaryCard>
           <SummaryCardIcon>
