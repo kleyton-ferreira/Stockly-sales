@@ -18,7 +18,7 @@ export interface MostSoldProductDto {
 }
 
 interface DashboardDto {
-    todayRevenue: number
+    // todayRevenue: number
     totalSales: number
     totalStock: number
     totalProducts: number
@@ -54,18 +54,18 @@ export const getDashboard = async (): Promise<DashboardDto> => {
     // END FUNCTION
 
 
-    const todayRevenueQuery = `
-     SELECT COALESCE(SUM("unitPrice" * "quantity"), 0) as "todayRevenue"
-     FROM "SaleProduct"
-     JOIN "Sale" ON "SaleProduct"."saleId" = "Sale"."id"
-     WHERE "Sale"."date" > $1 AND "Sale"."date" < $2
-    `
+    // const todayRevenueQuery = `
+    //  SELECT COALESCE(SUM("unitPrice" * "quantity"), 0) as "todayRevenue"
+    //  FROM "SaleProduct"
+    //  JOIN "Sale" ON "SaleProduct"."saleId" = "Sale"."id"
+    //  WHERE "Sale"."date" > $1 AND "Sale"."date" < $2
+    // `
 
-    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
-    const endOfDay = new Date(new Date().setHours(23, 59, 59, 999));
+    // const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
+    // const endOfDay = new Date(new Date().setHours(23, 59, 59, 999));
 
 
-    const todayRevenuePromise = db.$queryRawUnsafe<{ todayRevenue: number }[]>(todayRevenueQuery, startOfDay, endOfDay)
+    // const todayRevenuePromise = db.$queryRawUnsafe<{ todayRevenue: number }[]>(todayRevenueQuery, startOfDay, endOfDay)
 
     const totalSalesPromise = db.sale.count()
 
@@ -86,8 +86,8 @@ export const getDashboard = async (): Promise<DashboardDto> => {
     `;
     const mostSoldProductsPromisse = await db.$queryRawUnsafe<{ productId: string, name: string; totalSold: number, stock: number, price: number }[]>(mostSoldProductsQuery)
 
-    const [todayRevenue, totalSales, totalStock, totalProducts, mostSoldProducts] = await Promise.all([
-        todayRevenuePromise,
+    const [totalSales, totalStock, totalProducts, mostSoldProducts] = await Promise.all([
+        // todayRevenuePromise,
         totalSalesPromise,
         totalStockPromise,
         totalProductsPromise,
@@ -95,7 +95,7 @@ export const getDashboard = async (): Promise<DashboardDto> => {
     ])
 
     return {
-        todayRevenue: Number(todayRevenue[0].todayRevenue),
+        // todayRevenue: Number(todayRevenue[0].todayRevenue),
         totalSales,
         totalStock: Number(totalStock._sum.stock),
         totalProducts,
