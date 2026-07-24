@@ -5,10 +5,11 @@ import Header, {
   HeaderTitle,
 } from "../_components/header";
 
-import { SumaryCardSkeletron } from "./_components/summary-card";
+import {
+  SumaryCardLastSkeletron,
+  SumaryCardSkeletron,
+} from "./_components/summary-card";
 import { getDashboard } from "../_data-access/dashboard/get-dashboard";
-
-import RevenueChart from "./_components/revenue-chart";
 import MostsoldProductItem from "./_components/most-sold-product";
 import TotalRevenueCards from "./_components/total-revenue-cards";
 import { Suspense } from "react";
@@ -17,8 +18,10 @@ import TotalSalesCard from "./_components/total-sales-card";
 import TotalStockCard from "./_components/total-stock-card";
 import TotalProductsCard from "./_components/total-products-card";
 
+import Last14DaysRevenueCard from "./_components/last-14-days-revenue-card";
+
 const Home = async () => {
-  const { totalLast14DaysRevenue, mostSoldProducts } = await getDashboard();
+  const { mostSoldProducts } = await getDashboard();
 
   return (
     <div className="m-6 flex w-full flex-col space-y-8 rounded-lg">
@@ -55,11 +58,10 @@ const Home = async () => {
       </div>
 
       <div className="grid min-h-0 grid-cols-[minmax(0,2.5fr),minmax(0,1fr)] gap-6">
-        <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white p-6">
-          <p className="text-lg font-bold text-[#00A180]">Receita Total</p>
-          <p className="text-sm text-slate-500">últimos 14 dias</p>
-          <RevenueChart data={totalLast14DaysRevenue} />
-        </div>
+        <Suspense fallback={<SumaryCardLastSkeletron />}>
+          <Last14DaysRevenueCard />
+        </Suspense>
+
         <div className="flex h-full flex-col overflow-hidden rounded-xl bg-white p-6">
           <p className="mb-4 text-lg font-bold text-[#00A180]">
             Produtos mais vendidos

@@ -32,3 +32,14 @@ export const SumaryCardSkeletron = () => {
     </Skeleton>
   );
 };
+
+export const SumaryCardLastSkeletron = () => {
+  return (
+    <Skeleton className="h-[144px] w-[524px] rounded-xl bg-slate-300">
+      <div className="space-y-1 px-6 pt-6">
+        <Skeleton className="mb-2 h-7 w-[120px]" />
+        <Skeleton className="mb-1 h-5 w-[105px]" />
+      </div>
+    </Skeleton>
+  );
+};
