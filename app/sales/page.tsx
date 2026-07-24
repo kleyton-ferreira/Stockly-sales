@@ -20,7 +20,7 @@ const SalesPage = async () => {
   }));
 
   return (
-    <div className="w-full p-8">
+    <div className="w-full p-8 overflow-auto">
       <div className="mb-6 flex items-center justify-between">
         <div className="">
           <p className="text-sm font-bold text-textGreen-primary">Vendas</p>

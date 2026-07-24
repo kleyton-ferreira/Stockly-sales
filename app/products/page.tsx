@@ -9,7 +9,7 @@ const ProductPage = async () => {
   const products = await getProducts();
 
   return (
-    <div className="w-full p-8">
+    <div className="w-full overflow-auto p-8">
       <div className="mb-6 flex items-center justify-between">
         <div className="">
           <p className="text-sm font-bold text-textGreen-primary">Produtos</p>
