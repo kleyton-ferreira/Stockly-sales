@@ -8,7 +8,7 @@ export interface DayTotalRevenueDto {
 }
 
 export const getLast14DaysRevenue = async (): Promise<DayTotalRevenueDto[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 7000))
+    await new Promise((resolve) => setTimeout(resolve, 2500))
     const today = dayjs().endOf("day").toDate()
     const last14Day = [13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0].map((day) => {
         return dayjs(today).subtract(day, "day")

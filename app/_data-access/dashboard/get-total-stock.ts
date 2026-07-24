@@ -3,7 +3,7 @@ import "server-only"
 import { db } from "@/app/_lib/prisma"
 
 export const getTotalStock = async (): Promise<number> => {
-    await new Promise((resolve) => setTimeout(resolve, 6000))
+    await new Promise((resolve) => setTimeout(resolve, 1500))
     const totalStock = await db.product.aggregate({
         _sum: {
             stock: true

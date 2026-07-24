@@ -3,7 +3,7 @@ import "server-only"
 import { db } from "@/app/_lib/prisma"
 
 export const getTotalRevenue = async (): Promise<number> => {
-    await new Promise((resolve) => setTimeout(resolve, 5000))
+    await new Promise((resolve) => setTimeout(resolve, 3500))
     const totalRevenueQuery = `
      SELECT COALESCE(SUM("unitPrice" * "quantity"), 0) as "totalRevenue"
      FROM "SaleProduct"
