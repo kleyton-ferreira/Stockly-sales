@@ -108,7 +108,7 @@ const UpsertSheetContent = ({
       form.reset();
       setSelectedProducts([]);
     }
-  }, [isOpen]);
+  }, [isOpen, form]);
 
   useEffect(() => {
     setSelectedProducts(defaultSelectedProducts ?? []);

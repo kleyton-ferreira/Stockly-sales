@@ -17,7 +17,6 @@ import TotalStockCard from "./_components/total-stock-card";
 import TotalProductsCard from "./_components/total-products-card";
 import Last14DaysRevenueCard from "./_components/last-14-days-revenue-card";
 import MostSoldProducts from "./_components/most-sold-products";
-import { Skeleton } from "../_components/ui/skeleton";
 
 const Home = async () => {
   return (
